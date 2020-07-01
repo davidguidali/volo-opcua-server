@@ -1,2 +1,2 @@
-# volo-upcua-server
-OPCUA server for the Volo project.
+# Volo OPCUA Server
+OPCUA server implementation for the Volo project.
