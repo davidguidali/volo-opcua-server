@@ -44,10 +44,6 @@ namespace Volo.Opcua.Server
 
             timer.Start();
             Console.WriteLine("Ready!");
-            Console.ReadKey();
-            timer.Stop();
-
-            master.Stop();
         }
 
         private static AppSettings GetAppSettings(string settings)
