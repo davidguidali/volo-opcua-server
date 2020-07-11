@@ -12,5 +12,8 @@ namespace Volo.Opcua.Server
 
         [JsonProperty("applicationName")]
         public string ApplicationName { get; set; }
+
+        [JsonProperty("port")]
+        public int Port { get; set; }
     }
 }

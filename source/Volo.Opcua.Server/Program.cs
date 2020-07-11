@@ -1,14 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Volo.Opcua.Server
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var rootCommand = new RootCommand
             {
@@ -34,9 +36,18 @@ namespace Volo.Opcua.Server
             var server = serviceProvider.GetRequiredService<ServerApplication>();
 
             var logger = new ConsoleLogger();
-            var master = new LibUA.Server.Master(server, 7718, 10, 30, 100, logger);
+            var master = new LibUA.Server.Master(server, appSettings.Port, 10, 30, 100, logger);
             master.Start();
-            
+
+            var timer = new Timer(1000);
+            timer.Elapsed += (sender, e) => { server.PlayRow(); };
+
+            timer.Start();
+            Console.WriteLine("Ready!");
+            Console.ReadKey();
+            timer.Stop();
+
+            master.Stop();
         }
 
         private static AppSettings GetAppSettings(string settings)
@@ -52,5 +63,3 @@ namespace Volo.Opcua.Server
         }
     }
 }
-
-
