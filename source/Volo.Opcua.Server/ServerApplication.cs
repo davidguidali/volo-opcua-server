@@ -43,7 +43,7 @@ namespace Volo.Opcua.Server
             get { return _securityProvider.Key; }
         }
 
-        public void AddNode(NodeId nodeId, float value)
+        public void AddDatapoint(NodeId nodeId, float value)
         {
             var node = new NodeVariable(nodeId, new QualifiedName(nodeId.StringIdentifier),
                 new LocalizedText(nodeId.StringIdentifier), new LocalizedText(nodeId.StringIdentifier), 0, 0,
@@ -85,7 +85,7 @@ namespace Volo.Opcua.Server
             }
         }
 
-        public void UpdateNode(NodeId nodeId, float value)
+        public void UpdateDatapoint(NodeId nodeId, float value)
         {
             _nodes[nodeId] = value;
         }

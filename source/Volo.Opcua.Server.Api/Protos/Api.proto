@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+service DatapointService {
+  rpc AddDatapoint (DatapointMessage) returns (ApiResult);
+  rpc UpdateDatapoint (DatapointMessage) returns (ApiResult);
+}
+
+message DatapointMessage {
+  string identifier = 1;
+  float value = 2;
+}
+
+message ApiResult {
+  string resultCode = 1;
+  string message = 2;
+}

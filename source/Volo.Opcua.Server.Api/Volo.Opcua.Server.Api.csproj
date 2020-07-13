@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>davidguidali</Authors>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\Api.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.29.0" />
+    <PackageReference Include="Grpc.Core" Version="2.30.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Volo.Opcua.Server\Volo.Opcua.Server.Core.csproj" />
+  </ItemGroup>
+</Project>

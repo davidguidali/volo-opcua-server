@@ -3,10 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Threading.Tasks;
+using Grpc.Core;
 using System.Timers;
 
-namespace Volo.Opcua.Server
+namespace Volo.Opcua.Server.Api
 {
     internal class Program
     {
@@ -45,7 +45,15 @@ namespace Volo.Opcua.Server
 
             timer.Start();
 
-            Console.WriteLine($"Server listening on port {appSettings.Port}...");
+            var grpcServer = new Grpc.Core.Server
+            {
+                Services = { DatapointService.BindService(new DatapointApi(server)) },
+                Ports = { new ServerPort("0.0.0.0", 50051, ServerCredentials.Insecure) }
+            };
+
+            grpcServer.Start();
+
+            Console.WriteLine($"OPC-UA Server listening on port {appSettings.Port}...");
         }
 
         private static AppSettings GetAppSettings(string settings)
