@@ -2,6 +2,7 @@
 using LibUA.Server;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -12,9 +13,9 @@ namespace Volo.Opcua.Server
     {
         private readonly ApplicationDescription _appDescription;
         private readonly NodeObject _itemsRoot;
-        private readonly NodeVariable[] _trendNodes;
         private readonly AppSettings _settings;
         private readonly SecurityProvider _securityProvider;
+        private readonly Dictionary<NodeVariable, float> _nodes;
 
         public override X509Certificate2 ApplicationCertificate
         {
@@ -28,6 +29,7 @@ namespace Volo.Opcua.Server
 
         public ServerApplication(AppSettings settings, SecurityProvider securityProvider)
         {
+            _nodes = new Dictionary<NodeVariable, float>();
             _settings = settings;
             _securityProvider = securityProvider;
 
@@ -57,21 +59,6 @@ namespace Volo.Opcua.Server
             (AddressSpaceTable[new NodeId(UAConst.OperationLimitsType_MaxNodesPerTranslateBrowsePathsToNodeIds)] as NodeVariable).Value = 100;
             (AddressSpaceTable[new NodeId(UAConst.OperationLimitsType_MaxNodesPerNodeManagement)] as NodeVariable).Value = 100;
             (AddressSpaceTable[new NodeId(UAConst.OperationLimitsType_MaxMonitoredItemsPerCall)] as NodeVariable).Value = 100;
-
-            _trendNodes = new NodeVariable[1000];
-            var nodeTypeFloat = new NodeId(0, 10);
-            for (int i = 0; i < _trendNodes.Length; i++)
-            {
-                var id = string.Format("Trend {0}", (1 + i).ToString("D6"));
-                _trendNodes[i] = new NodeVariable(new NodeId(2, (uint)(1 + i)), new QualifiedName(id),
-                    new LocalizedText(id), new LocalizedText(id), 0, 0,
-                    AccessLevel.CurrentRead | AccessLevel.HistoryRead,
-                    AccessLevel.CurrentRead | AccessLevel.HistoryRead, 0, true, nodeTypeFloat);
-
-                _itemsRoot.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), _trendNodes[i].Id, false));
-                _trendNodes[i].References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), _itemsRoot.Id, true));
-                AddressSpaceTable.TryAdd(_trendNodes[i].Id, _trendNodes[i]);
-            }
         }
 
         public override IList<EndpointDescription> GetEndpointDescriptions(string endpointUrlHint)
@@ -157,16 +144,16 @@ namespace Volo.Opcua.Server
         protected override DataValue HandleReadRequestInternal(NodeId id)
         {
             Node node = null;
-            if (id.NamespaceIndex == 2 &&
-                AddressSpaceTable.TryGetValue(id, out node))
+
+            if (id.NamespaceIndex == 2 && AddressSpaceTable.TryGetValue(id, out node))
             {
-                return new DataValue(3.14159265, StatusCode.Good, DateTime.Now);
+                var value = _nodes.First(f => f.Key.Equals(node));
+                return new DataValue(value.Value, StatusCode.Good, DateTime.Now);
             }
 
             return base.HandleReadRequestInternal(id);
         }
 
-        protected int rowCount = 1;
         protected Random rnd = new Random();
         protected UInt64 nextEventId = 1;
 
@@ -285,17 +272,43 @@ namespace Volo.Opcua.Server
             });
         }
 
+        public void SetNode(string identifier, float value)
+        {
+            var nodeId = new NodeId(2, identifier);
+
+            if (_nodes.Any(f => f.Key.Id.Equals(nodeId)))
+            {
+                var nodeValuePair = _nodes.Where(f => f.Key.Id.Equals(nodeId)).First().Key;
+                _nodes[nodeValuePair] = value;
+            }
+            else
+            {
+                NodeVariable node = new NodeVariable(new NodeId(2, identifier),
+                new QualifiedName(identifier),
+                new LocalizedText(identifier),
+                new LocalizedText(identifier),
+                0,
+                0,
+                AccessLevel.CurrentRead,
+                AccessLevel.CurrentRead,
+                0,
+                false,
+                new NodeId(0, 10));
+
+                _nodes.Add(node, value);
+
+                _itemsRoot.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), node.Id, false));
+                node.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), _itemsRoot.Id, true));
+                AddressSpaceTable.TryAdd(node.Id, node);
+            }
+        }
+
         public void PlayRow()
         {
-            Console.WriteLine("Play row {0}", rowCount);
-
-            foreach (var node in _trendNodes)
+            foreach (var node in _nodes)
             {
-                var dv = new DataValue((float)(rowCount + 0.1 * rnd.NextDouble()), StatusCode.Good, DateTime.Now);
-                // MonitorNotifyDataChange(node.Id, dv);
+                MonitorNotifyDataChange(node.Key.Id, new DataValue(node.Value, StatusCode.Good, DateTime.Now));
             }
-
-            ++rowCount;
 
             var eventTime = DateTime.UtcNow;
             var ev = GenerateSampleAlarmEvent(eventTime);

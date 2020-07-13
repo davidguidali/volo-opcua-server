@@ -35,6 +35,8 @@ namespace Volo.Opcua.Server
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var server = serviceProvider.GetRequiredService<ServerApplication>();
+            server.SetNode("choco.xy", 10);
+            server.SetNode("milk.xy", 20);
 
             var logger = new ConsoleLogger();
             var master = new LibUA.Server.Master(server, appSettings.Port, 10, 30, 100, logger);
@@ -44,6 +46,11 @@ namespace Volo.Opcua.Server
             timer.Elapsed += (sender, e) => { server.PlayRow(); };
 
             timer.Start();
+
+            var timer2 = new Timer(5000);
+            timer2.Elapsed += (sender, e) => { server.SetNode("milk.xy", DateTime.Now.Second); };
+
+            timer2.Start();
             Console.WriteLine($"Server listening on port {appSettings.Port}...");
         }
 
