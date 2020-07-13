@@ -10,10 +10,10 @@ namespace Volo.Opcua.Server
     public partial class ServerApplication : Application
     {
         private readonly ApplicationDescription _appDescription;
-        private readonly AppSettings _settings;
-        private readonly Dictionary<NodeId, float> _nodes = new Dictionary<NodeId, float>();
         private readonly NodeObject _itemsRoot;
+        private readonly Dictionary<NodeId, float> _nodes = new Dictionary<NodeId, float>();
         private readonly SecurityProvider _securityProvider;
+        private readonly AppSettings _settings;
 
         public ServerApplication(AppSettings settings, SecurityProvider securityProvider)
         {
@@ -41,6 +41,19 @@ namespace Volo.Opcua.Server
         public override RSACryptoServiceProvider ApplicationPrivateKey
         {
             get { return _securityProvider.Key; }
+        }
+
+        public void AddNode(NodeId nodeId, float value)
+        {
+            var node = new NodeVariable(nodeId, new QualifiedName(nodeId.StringIdentifier),
+                new LocalizedText(nodeId.StringIdentifier), new LocalizedText(nodeId.StringIdentifier), 0, 0,
+                AccessLevel.CurrentRead, AccessLevel.CurrentRead, 0, false, new NodeId(0, 10));
+
+            _itemsRoot.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), node.Id, false));
+            node.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), _itemsRoot.Id, true));
+            AddressSpaceTable.TryAdd(node.Id, node);
+
+            _nodes.Add(nodeId, value);
         }
 
         public override ApplicationDescription GetApplicationDescription(string endpointUrlHint)
@@ -72,16 +85,9 @@ namespace Volo.Opcua.Server
             }
         }
 
-        public void SetNode(NodeId nodeId, float value)
+        public void UpdateNode(NodeId nodeId, float value)
         {
-            if (_nodes.ContainsKey(nodeId))
-            {
-                _nodes[nodeId] = value;
-            }
-            else
-            {
-                AddNode(nodeId, value);
-            }
+            _nodes[nodeId] = value;
         }
 
         protected override DataValue HandleReadRequestInternal(NodeId id)
@@ -92,19 +98,6 @@ namespace Volo.Opcua.Server
             }
 
             return base.HandleReadRequestInternal(id);
-        }
-
-        private void AddNode(NodeId nodeId, float value)
-        {
-            var node = new NodeVariable(nodeId, new QualifiedName(nodeId.StringIdentifier),
-                new LocalizedText(nodeId.StringIdentifier), new LocalizedText(nodeId.StringIdentifier), 0, 0,
-                AccessLevel.CurrentRead, AccessLevel.CurrentRead, 0, false, new NodeId(0, 10));
-
-            _itemsRoot.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), node.Id, false));
-            node.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), _itemsRoot.Id, true));
-            AddressSpaceTable.TryAdd(node.Id, node);
-
-            _nodes.Add(nodeId, value);
         }
     }
 }

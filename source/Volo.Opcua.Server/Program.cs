@@ -35,7 +35,6 @@ namespace Volo.Opcua.Server
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var server = serviceProvider.GetRequiredService<ServerApplication>();
-            server.SetNode(new LibUA.Core.NodeId(2, "test"), 50);
 
             var logger = new ConsoleLogger();
             var master = new LibUA.Server.Master(server, appSettings.Port, 10, 30, 100, logger);
