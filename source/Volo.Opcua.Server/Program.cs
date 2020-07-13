@@ -44,7 +44,7 @@ namespace Volo.Opcua.Server
             timer.Elapsed += (sender, e) => { server.PlayRow(); };
 
             timer.Start();
-            Console.WriteLine("Ready!");
+            Console.WriteLine($"Server listening on port {appSettings.Port}...");
         }
 
         private static AppSettings GetAppSettings(string settings)

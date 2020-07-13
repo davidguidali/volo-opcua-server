@@ -45,10 +45,8 @@ namespace Volo.Opcua.Server
             new LocalizedText("Items"), 0, 0, 0);
 
             // Objects organizes Items
-            AddressSpaceTable[new NodeId(UAConst.ObjectsFolder)].References
-                .Add(new ReferenceNode(new NodeId(UAConst.Organizes), new NodeId(2, 0), false));
-            _itemsRoot.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes),
-                new NodeId(UAConst.ObjectsFolder), true));
+            AddressSpaceTable[new NodeId(UAConst.ObjectsFolder)].References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), new NodeId(2, 0), false));
+            _itemsRoot.References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), new NodeId(UAConst.ObjectsFolder), true));
             AddressSpaceTable.TryAdd(_itemsRoot.Id, _itemsRoot);
 
             (AddressSpaceTable[new NodeId(UAConst.OperationLimitsType_MaxNodesPerRead)] as NodeVariable).Value = 100;
@@ -74,45 +72,6 @@ namespace Volo.Opcua.Server
                 _trendNodes[i].References.Add(new ReferenceNode(new NodeId(UAConst.Organizes), _itemsRoot.Id, true));
                 AddressSpaceTable.TryAdd(_trendNodes[i].Id, _trendNodes[i]);
             }
-        }
-
-        public override object SessionCreate(SessionCreationInfo sessionInfo)
-        {
-            // Create and return a session object with sessionInfo
-
-            return null;
-        }
-
-        public override bool SessionValidateClientApplication(object session,
-            ApplicationDescription clientApplicationDescription, byte[] clientCertificate, string sessionName)
-        {
-            // Update your session object with the client's UA application description
-            // Return true to allow the client, false to reject
-
-            return true;
-        }
-
-        public override void SessionRelease(object session)
-        {
-        }
-
-        public override bool SessionValidateClientUser(object session, object userIdentityToken)
-        {
-            if (userIdentityToken is UserIdentityAnonymousToken)
-            {
-                return true;
-            }
-            else if (userIdentityToken is UserIdentityUsernameToken)
-            {
-                var username = (userIdentityToken as UserIdentityUsernameToken).Username;
-                var password =
-                    (new UTF8Encoding()).GetString((userIdentityToken as UserIdentityUsernameToken).PasswordHash);
-
-                return true;
-            }
-
-            throw new Exception("Unhandled user identity token type");
-            return base.SessionValidateClientUser(session, userIdentityToken);
         }
 
         public override IList<EndpointDescription> GetEndpointDescriptions(string endpointUrlHint)
@@ -207,90 +166,14 @@ namespace Volo.Opcua.Server
             return base.HandleReadRequestInternal(id);
         }
 
-        private List<DataValue> testHistoryPoints = null;
-
-        public override UInt32 HandleHistoryReadRequest(object session, object readDetails, HistoryReadValueId id,
-            ContinuationPointHistory continuationPoint, List<DataValue> results, ref int? offsetContinueFit)
-        {
-            if (testHistoryPoints == null)
-            {
-                testHistoryPoints = new List<DataValue>();
-
-                var dt = new DateTime(2015, 12, 1);
-                for (int i = 0; i < 100000; i++)
-                {
-                    testHistoryPoints.Add(new DataValue(
-                        Math.Sin(i * 0.3) + Math.Cos(i * 0.17) * 0.5 + Math.Sin(i * 0.087) * 0.25, StatusCode.Good,
-                        dt));
-                    dt = dt.AddHours(1);
-                }
-            }
-
-            int startOffset = continuationPoint.IsValid ? continuationPoint.Offset : 0;
-            if (readDetails is ReadRawModifiedDetails)
-            {
-                var rd = readDetails as ReadRawModifiedDetails;
-                for (int i = 0; i < 100000; i++)
-                {
-                    var p = testHistoryPoints[i];
-                    if (p.SourceTimestamp >= rd.StartTime &&
-                        p.SourceTimestamp < rd.EndTime)
-                    {
-                        // Skip startOffset points
-                        if (startOffset > 0)
-                        {
-                            startOffset--;
-                            continue;
-                        }
-
-                        results.Add(p);
-                    }
-                }
-
-                return (UInt32)StatusCode.Good;
-            }
-
-            return (UInt32)StatusCode.BadHistoryOperationUnsupported;
-        }
-
-        public override UInt32 HandleHistoryEventReadRequest(object session, object readDetails,
-            HistoryReadValueId id, ContinuationPointHistory continuationPoint, List<object[]> results)
-        {
-            if (readDetails is ReadEventDetails)
-            {
-                var rd = readDetails as ReadEventDetails;
-
-                var dt = rd.StartTime;
-                for (int i = 0; i < 5; i++)
-                {
-                    var ev = GenerateSampleAlarmEvent(dt);
-                    results.Add(NetDispatcher.MatchFilterClauses(rd.SelectClauses, ev));
-                    dt = dt.AddMinutes(1);
-                }
-
-                return (UInt32)StatusCode.Good;
-            }
-
-            return (UInt32)StatusCode.BadHistoryOperationUnsupported;
-        }
-
         protected int rowCount = 1;
         protected Random rnd = new Random();
-
-        // These numbers are allowed to wrap in case of overflow
-        // These are usually used by the client to match events
         protected UInt64 nextEventId = 1;
 
         private EventNotification GenerateSampleAlarmEvent(DateTime eventTime)
         {
             return new EventNotification(new EventNotification.Field[]
             {
-                    // During publishing, operand BrowsePaths are matched
-                    // against UA select clauses from the subscriber.
-                    // The operands shown here are the most common requested (90% of cases).
-                    // Types match operand BrowsePath, do not change them and remember
-                    // casting when passing into a variant.
-
                     new EventNotification.Field()
                     {
                         Operand = new SimpleAttributeOperand(
@@ -409,7 +292,7 @@ namespace Volo.Opcua.Server
             foreach (var node in _trendNodes)
             {
                 var dv = new DataValue((float)(rowCount + 0.1 * rnd.NextDouble()), StatusCode.Good, DateTime.Now);
-                MonitorNotifyDataChange(node.Id, dv);
+                // MonitorNotifyDataChange(node.Id, dv);
             }
 
             ++rowCount;
