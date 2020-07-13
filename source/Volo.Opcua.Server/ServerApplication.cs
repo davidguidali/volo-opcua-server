@@ -1,40 +1,41 @@
-﻿using LibUA;
-using LibUA.Core;
+﻿using LibUA.Core;
 using LibUA.Server;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Volo.Opcua.Server
 {
-    public class ServerApplication : Application
+    public partial class ServerApplication : Application
     {
         private readonly ApplicationDescription _appDescription;
         private readonly NodeObject _itemsRoot;
         private readonly NodeVariable[] _trendNodes;
-        private X509Certificate2 _appCertifiacte = null;
-        private RSACryptoServiceProvider _cryptPrivateKey = null;
+        private readonly AppSettings _settings;
+        private readonly SecurityProvider _securityProvider;
 
         public override X509Certificate2 ApplicationCertificate
         {
-            get { return _appCertifiacte; }
+            get { return _securityProvider.Cert; }
         }
 
         public override RSACryptoServiceProvider ApplicationPrivateKey
         {
-            get { return _cryptPrivateKey; }
+            get { return _securityProvider.Key; }
         }
 
-        public ServerApplication(AppSettings settings)
+        public ServerApplication(AppSettings settings, SecurityProvider securityProvider)
         {
-            LoadCertificateAndPrivateKey();
+            _settings = settings;
+            _securityProvider = securityProvider;
 
-            _appDescription = new ApplicationDescription(settings.ApplicationUri,
-                                                           settings.ProductUri,
-                                                           new LocalizedText("en-US", settings.ApplicationName),
+            _securityProvider.LoadCertificateAndPrivateKey();
+
+            _appDescription = new ApplicationDescription(_settings.ApplicationUri,
+                                                           _settings.ProductUri,
+                                                           new LocalizedText("en-US", _settings.ApplicationName),
                                                            ApplicationType.Server,
                                                            null,
                                                            null,
@@ -403,7 +404,7 @@ namespace Volo.Opcua.Server
 
         public void PlayRow()
         {
-            //Console.WriteLine("Play row {0}", rowCount);
+            Console.WriteLine("Play row {0}", rowCount);
 
             foreach (var node in _trendNodes)
             {
@@ -415,51 +416,9 @@ namespace Volo.Opcua.Server
 
             var eventTime = DateTime.UtcNow;
             var ev = GenerateSampleAlarmEvent(eventTime);
-            // MonitorNotifyEvent(new NodeId(UAConst.Server), ev);
+            MonitorNotifyEvent(new NodeId(UAConst.Server), ev);
 
             nextEventId++;
-        }
-
-        private void LoadCertificateAndPrivateKey()
-        {
-            try
-            {
-                // Try to load existing (public key) and associated private key
-                _appCertifiacte = new X509Certificate2("ServerCert.der");
-                _cryptPrivateKey = new RSACryptoServiceProvider();
-
-                var rsaPrivParams = UASecurity.ImportRSAPrivateKey(File.ReadAllText("ServerKey.pem"));
-                _cryptPrivateKey.ImportParameters(rsaPrivParams);
-            }
-            catch
-            {
-                // Make a new certificate (public key) and associated private key
-                var dn = new X500DistinguishedName("CN=Client certificate;OU=Demo organization",
-                    X500DistinguishedNameFlags.UseSemicolons);
-                SubjectAlternativeNameBuilder sanBuilder = new SubjectAlternativeNameBuilder();
-                sanBuilder.AddUri(new Uri("urn:volo.opcua.server"));
-
-                using (RSA rsa = RSA.Create(2048))
-                {
-                    var request = new CertificateRequest(dn, rsa, HashAlgorithmName.SHA256,
-                        RSASignaturePadding.Pkcs1);
-
-                    request.CertificateExtensions.Add(sanBuilder.Build());
-
-                    var certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)),
-                        new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
-
-                    _appCertifiacte = new X509Certificate2(certificate.Export(X509ContentType.Pfx, ""),
-                        "", X509KeyStorageFlags.DefaultKeySet);
-
-                    var certPrivateParams = rsa.ExportParameters(true);
-                    File.WriteAllText("ServerCert.der", UASecurity.ExportPEM(_appCertifiacte));
-                    File.WriteAllText("ServerKey.pem", UASecurity.ExportRSAPrivateKey(certPrivateParams));
-
-                    _cryptPrivateKey = new RSACryptoServiceProvider();
-                    _cryptPrivateKey.ImportParameters(certPrivateParams);
-                }
-            }
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Volo.Opcua.Server
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(appSettings);
             serviceCollection.AddSingleton<ServerApplication>();
+            serviceCollection.AddSingleton<SecurityProvider>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var server = serviceProvider.GetRequiredService<ServerApplication>();

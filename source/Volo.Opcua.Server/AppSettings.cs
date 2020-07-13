@@ -15,5 +15,17 @@ namespace Volo.Opcua.Server
 
         [JsonProperty("port")]
         public int Port { get; set; }
+
+        [JsonProperty("certificate")]
+        public string Certificate { get; set; }
+
+        [JsonProperty("privateKey")]
+        public string PrivateKey { get; set; }
+
+        [JsonProperty("commonName")]
+        public string CommonName { get; set; }
+
+        [JsonProperty("organizationalUnit")]
+        public string OrganizationalUnit { get; set; }
     }
 }
