@@ -37,7 +37,7 @@ namespace Volo.Opcua.Server
             var server = serviceProvider.GetRequiredService<ServerApplication>();
 
             var logger = new ConsoleLogger();
-            var master = new LibUA.Server.Master(server, appSettings.Port, 10, 30, 100, logger);
+            var master = new LibUA.Server.Master(server, appSettings.Port, appSettings.Timeout, appSettings.Backlog, appSettings.MaxClients, logger);
             master.Start();
 
             var timer = new Timer(appSettings.MonitoringInterval);
