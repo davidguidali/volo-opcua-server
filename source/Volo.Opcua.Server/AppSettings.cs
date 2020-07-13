@@ -27,5 +27,14 @@ namespace Volo.Opcua.Server
 
         [JsonProperty("organizationalUnit")]
         public string OrganizationalUnit { get; set; }
+
+        [JsonProperty("monitoringInterval")]
+        public int MonitoringInterval { get; set; }
+
+        [JsonProperty("rootItemName")]
+        public string RootItemName { get; set; }
+
+        [JsonProperty("locale")]
+        public string Locale { get; set; }
     }
 }
