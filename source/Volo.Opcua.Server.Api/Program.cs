@@ -5,6 +5,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using Grpc.Core;
 using System.Timers;
+using LibUA;
 
 namespace Volo.Opcua.Server.Api
 {
@@ -34,26 +35,37 @@ namespace Volo.Opcua.Server.Api
             serviceCollection.AddSingleton<SecurityProvider>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
-            var server = serviceProvider.GetRequiredService<ServerApplication>();
+            var opcuaServer = serviceProvider.GetRequiredService<ServerApplication>();
 
             var logger = new ConsoleLogger();
-            var master = new LibUA.Server.Master(server, appSettings.Port, appSettings.Timeout, appSettings.Backlog, appSettings.MaxClients, logger);
+
+            StartOpcuaServer(opcuaServer, appSettings, logger);
+            logger.Log(LogLevel.Info, $"OPC-UA Server listening on port {appSettings.OpcuaPort}...");
+
+            StartGrpcServer(opcuaServer, appSettings);
+            logger.Log(LogLevel.Info, $"Grpc Server listening on port {appSettings.GrpcPort}...");
+        }
+
+        private static void StartOpcuaServer(ServerApplication opcuaServer, AppSettings appSettings, ILogger logger)
+        {
+            var master = new LibUA.Server.Master(opcuaServer, appSettings.OpcuaPort, appSettings.Timeout, appSettings.Backlog, appSettings.MaxClients, logger);
             master.Start();
 
             var timer = new Timer(appSettings.MonitoringInterval);
-            timer.Elapsed += (sender, e) => { server.PlayRow(); };
+            timer.Elapsed += (sender, e) => { opcuaServer.PlayRow(); };
 
             timer.Start();
+        }
 
+        private static void StartGrpcServer(ServerApplication opcuaServer, AppSettings appSettings)
+        {
             var grpcServer = new Grpc.Core.Server
             {
-                Services = { DatapointService.BindService(new DatapointApi(server)) },
-                Ports = { new ServerPort("0.0.0.0", 50051, ServerCredentials.Insecure) }
+                Services = { DatapointService.BindService(new DatapointApi(opcuaServer)) },
+                Ports = { new ServerPort(appSettings.GrpcHost, 50051, ServerCredentials.Insecure) }
             };
 
             grpcServer.Start();
-
-            Console.WriteLine($"OPC-UA Server listening on port {appSettings.Port}...");
         }
 
         private static AppSettings GetAppSettings(string settings)

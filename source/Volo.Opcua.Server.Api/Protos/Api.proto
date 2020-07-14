@@ -11,6 +11,10 @@ message DatapointMessage {
 }
 
 message ApiResult {
-  string resultCode = 1;
+  enum ResultCode {
+      Success = 0;
+      Error = 1;
+  }
+  ResultCode resultCode = 1;
   string message = 2;
 }

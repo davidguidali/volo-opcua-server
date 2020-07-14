@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using LibUA.Core;
 using System.Threading.Tasks;
+using static ApiResult.Types;
 
 namespace Volo.Opcua.Server.Api
 {
@@ -16,13 +17,13 @@ namespace Volo.Opcua.Server.Api
         public override Task<ApiResult> AddDatapoint(DatapointMessage request, ServerCallContext context)
         {
             _serverApplication.AddDatapoint(new NodeId(2, request.Identifier), request.Value);
-            return Task.FromResult(new ApiResult() { ResultCode = "200", Message = "Datapoint has been added" });
+            return Task.FromResult(new ApiResult() { ResultCode = ResultCode.Success, Message = "Datapoint has been added" });
         }
 
         public override Task<ApiResult> UpdateDatapoint(DatapointMessage request, ServerCallContext context)
         {
-            _serverApplication.AddDatapoint(new NodeId(2, request.Identifier), request.Value);
-            return Task.FromResult(new ApiResult() { ResultCode = "200", Message = "Datapoint has been updated" });
+            _serverApplication.UpdateDatapoint(new NodeId(2, request.Identifier), request.Value);
+            return Task.FromResult(new ApiResult() { ResultCode = ResultCode.Success, Message = "Datapoint has been updated" });
         }
     }
 }

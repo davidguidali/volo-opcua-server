@@ -31,8 +31,8 @@ namespace Volo.Opcua.Server
         [JsonProperty("organizationalUnit")]
         public string OrganizationalUnit { get; set; }
 
-        [JsonProperty("port")]
-        public int Port { get; set; }
+        [JsonProperty("opcuaPort")]
+        public int OpcuaPort { get; set; }
 
         [JsonProperty("privateKey")]
         public string PrivateKey { get; set; }
@@ -45,5 +45,11 @@ namespace Volo.Opcua.Server
 
         [JsonProperty("timeout")]
         public int Timeout { get; set; }
+
+        [JsonProperty("grpcPort")]
+        public int GrpcPort { get; set; }
+
+        [JsonProperty("grpcHost")]
+        public string GrpcHost { get; set; }
     }
 }
