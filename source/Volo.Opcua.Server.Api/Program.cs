@@ -11,7 +11,7 @@ namespace Volo.Opcua.Server.Api
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var rootCommand = new RootCommand
             {

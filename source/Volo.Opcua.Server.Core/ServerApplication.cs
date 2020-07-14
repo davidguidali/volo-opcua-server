@@ -90,6 +90,11 @@ namespace Volo.Opcua.Server
             _nodes[nodeId] = value;
         }
 
+        public bool HasDatapoint(NodeId nodeId)
+        {
+            return _nodes.ContainsKey(nodeId);
+        }
+
         protected override DataValue HandleReadRequestInternal(NodeId id)
         {
             if (_nodes.ContainsKey(id))

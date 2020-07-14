@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\Api.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\DatapointApi.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Volo.Opcua.Server\Volo.Opcua.Server.Core.csproj" />
+    <ProjectReference Include="..\Volo.Opcua.Server.Core\Volo.Opcua.Server.Core.csproj" />
   </ItemGroup>
 </Project>
