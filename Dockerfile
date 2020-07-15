@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 
 WORKDIR /src
 COPY source/*.sln ./
-COPY source/Volo.Opcua.Server.Core/*.csproj ./Volo.Opcua.Server.Core/
+COPY source/Volo.Opcua.Server/*.csproj ./Volo.Opcua.Server/
 COPY source/Volo.Opcua.Server.Api/*.csproj ./Volo.Opcua.Server.Api/
 
 RUN dotnet restore
@@ -16,7 +16,6 @@ WORKDIR /app
 
 COPY --from=build /src/Volo.Opcua.Server.Api/out ./
 
-EXPOSE 50051
 EXPOSE 7718
 
 ENTRYPOINT ["dotnet", "Volo.Opcua.Server.Api.dll"]

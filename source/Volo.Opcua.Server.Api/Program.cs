@@ -62,7 +62,7 @@ namespace Volo.Opcua.Server.Api
             var grpcServer = new Grpc.Core.Server
             {
                 Services = { DatapointService.BindService(new DatapointApi(opcuaServer)) },
-                Ports = { new ServerPort(appSettings.GrpcHost, 50051, ServerCredentials.Insecure) }
+                Ports = { new ServerPort(appSettings.GrpcHost, appSettings.GrpcPort, ServerCredentials.Insecure) }
             };
 
             grpcServer.Start();

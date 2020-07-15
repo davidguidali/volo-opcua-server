@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Volo.Opcua.Server.Core\Volo.Opcua.Server.Core.csproj" />
+    <ProjectReference Include="..\Volo.Opcua.Server\Volo.Opcua.Server.csproj" />
   </ItemGroup>
 </Project>

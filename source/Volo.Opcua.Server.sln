@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Volo.Opcua.Server.Api", "Volo.Opcua.Server.Api\Volo.Opcua.Server.Api.csproj", "{665062BA-646C-48A2-9FF9-5A822855AC3B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Volo.Opcua.Server.Core", "Volo.Opcua.Server.Core\Volo.Opcua.Server.Core.csproj", "{309AD3BF-46CC-4DA5-BEF1-C51734A12922}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Volo.Opcua.Server", "Volo.Opcua.Server\Volo.Opcua.Server.csproj", "{49FB0D67-2FD6-4FF4-B69F-DDC9367A09B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{665062BA-646C-48A2-9FF9-5A822855AC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{665062BA-646C-48A2-9FF9-5A822855AC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{665062BA-646C-48A2-9FF9-5A822855AC3B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{309AD3BF-46CC-4DA5-BEF1-C51734A12922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{309AD3BF-46CC-4DA5-BEF1-C51734A12922}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{309AD3BF-46CC-4DA5-BEF1-C51734A12922}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{309AD3BF-46CC-4DA5-BEF1-C51734A12922}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49FB0D67-2FD6-4FF4-B69F-DDC9367A09B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49FB0D67-2FD6-4FF4-B69F-DDC9367A09B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49FB0D67-2FD6-4FF4-B69F-DDC9367A09B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49FB0D67-2FD6-4FF4-B69F-DDC9367A09B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
