@@ -18,4 +18,4 @@ COPY --from=build /src/Volo.Opcua.Server.Api/out ./
 
 EXPOSE 7718
 
-ENTRYPOINT ["dotnet", "Volo.Opcua.Server.Api.dll"]
+ENTRYPOINT ["dotnet", "Volo.Opcua.Server.Api.dll", "--settings", "config/appsettings.json"]

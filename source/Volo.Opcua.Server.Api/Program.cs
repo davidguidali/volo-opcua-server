@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Grpc.Core;
@@ -17,7 +16,6 @@ namespace Volo.Opcua.Server.Api
             {
                 new Option<string>(
                     aliases: new[] { "--settings" },
-                    getDefaultValue: () => "appsettings.json",
                     description: "The path to the settings file")
             };
 
