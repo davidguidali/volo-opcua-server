@@ -16,6 +16,4 @@ WORKDIR /app
 
 COPY --from=build /src/Volo.Opcua.Server.Api/out ./
 
-EXPOSE 7718
-
-ENTRYPOINT ["dotnet", "Volo.Opcua.Server.Api.dll", "--settings", "config/appsettings.json"]
+ENTRYPOINT ["dotnet", "Volo.Opcua.Server.Api.dll", "--settings", "Config/appsettings.json"]
