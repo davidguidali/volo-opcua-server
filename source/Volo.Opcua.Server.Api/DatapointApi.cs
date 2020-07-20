@@ -84,10 +84,10 @@ namespace Volo.Opcua.Server.Api
 
             if (_serverApplication.HasDatapoint(nodeId))
             {
-                return AddDatapoint(request, context);
+                return UpdateDatapoint(request, context);
             }
 
-            return UpdateDatapoint(request, context);
+            return AddDatapoint(request, context);
         }
     }
 }
