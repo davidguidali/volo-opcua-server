@@ -1,20 +1,35 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
 service DatapointService {
-  rpc AddDatapoint (DatapointMessage) returns (ApiResult);
-  rpc UpdateDatapoint (DatapointMessage) returns (ApiResult);
+    rpc AddDatapoint (DatapointMessage) returns (ApiResult);
+    rpc UpdateDatapoint (DatapointMessage) returns (ApiResult);
+    rpc SetDatapoint (DatapointMessage) returns (ApiResult);
+    rpc GetDatapoint (IdentifierMessage) returns (DatapointResult);
+    rpc GetDatapoints (google.protobuf.Empty) returns (DatapointResult);
 }
 
 message DatapointMessage {
-  string identifier = 1;
-  float value = 2;
+    string identifier = 1;
+    float value = 2;
+}
+
+message IdentifierMessage {
+    string identifier = 1;
 }
 
 message ApiResult {
-  enum ResultCode {
-      Success = 0;
-      Error = 1;
-  }
-  ResultCode resultCode = 1;
-  string message = 2;
+    enum ResultCode {
+        Success = 0;
+        Error = 1;
+    }
+    ResultCode resultCode = 1;
+    string message = 2;
+}
+
+message DatapointResult {
+    repeated DatapointMessage datapoints = 1;
+    ApiResult apiResult = 2;
 }

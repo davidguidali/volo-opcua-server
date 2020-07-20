@@ -90,6 +90,16 @@ namespace Volo.Opcua.Server
             _nodes[nodeId] = value;
         }
 
+        public float GetDatapoint(NodeId nodeId)
+        {
+            return _nodes[nodeId];
+        }
+
+        public Dictionary<NodeId, float> GetDatapoints()
+        {
+            return _nodes;
+        }
+
         public bool HasDatapoint(NodeId nodeId)
         {
             return _nodes.ContainsKey(nodeId);
