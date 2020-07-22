@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\DatapointApi.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\OpcuaServerApi.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>

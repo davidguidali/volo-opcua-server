@@ -6,11 +6,11 @@ using static ApiResult.Types;
 
 namespace Volo.Opcua.Server.Api
 {
-    public class DatapointApi : DatapointService.DatapointServiceBase
+    public class OpcuaServerApi : OpcuaServerService.OpcuaServerServiceBase
     {
         private readonly ServerApplication _serverApplication;
 
-        public DatapointApi(ServerApplication serverApplication)
+        public OpcuaServerApi(ServerApplication serverApplication)
         {
             _serverApplication = serverApplication;
         }
