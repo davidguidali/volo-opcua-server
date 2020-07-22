@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Volo.Opcua.Server.Shared\Volo.Opcua.Server.Shared.csproj" />
     <ProjectReference Include="..\Volo.Opcua.Server\Volo.Opcua.Server.csproj" />
   </ItemGroup>
 </Project>

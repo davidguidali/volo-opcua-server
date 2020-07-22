@@ -2,6 +2,7 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 
 WORKDIR /src
 COPY source/*.sln ./
+COPY source/Volo.Opcua.Server.Shared/*.csproj ./Volo.Opcua.Server.Shared/
 COPY source/Volo.Opcua.Server/*.csproj ./Volo.Opcua.Server/
 COPY source/Volo.Opcua.Server.Api/*.csproj ./Volo.Opcua.Server.Api/
 

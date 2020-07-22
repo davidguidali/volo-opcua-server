@@ -5,6 +5,7 @@ using System.CommandLine.Invocation;
 using Grpc.Core;
 using System.Timers;
 using LibUA;
+using Volo.Opcua.Server.Shared;
 
 namespace Volo.Opcua.Server.Api
 {

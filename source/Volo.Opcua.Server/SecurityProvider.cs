@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Volo.Opcua.Server.Shared;
 
 namespace Volo.Opcua.Server
 {

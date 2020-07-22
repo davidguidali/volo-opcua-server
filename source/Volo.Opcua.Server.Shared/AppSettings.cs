@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Volo.Opcua.Server
+namespace Volo.Opcua.Server.Shared
 {
     public class AppSettings
     {
